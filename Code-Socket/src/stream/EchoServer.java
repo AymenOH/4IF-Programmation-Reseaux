@@ -23,8 +23,9 @@ public class EchoServer  {
     			new InputStreamReader(clientSocket.getInputStream()));    
     		PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
     		while (true) {
-    		  String line = socIn.readLine() + " retour";
-    		  socOut.println(line);
+    		  String line = socIn.readLine();
+    		  System.out.println("Client said :"+line);
+    		  socOut.println(line+"retour");
     		  
     		}
     	} catch (Exception e) {
