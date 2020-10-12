@@ -45,7 +45,7 @@ public class EchoClient {
                                + "the connection to:"+ args[0]);
             System.exit(1);
         }
-                             
+        System.out.println("Connexion to server "+args[0]+" with port "+args[1]);                    
         String line;
         while (true) {
         	line=stdIn.readLine();
