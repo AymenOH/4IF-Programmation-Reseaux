@@ -47,14 +47,14 @@ public class ServerMultiThreaded  {
 			ClientThreadRecieve ctR = new ClientThreadRecieve(clientSocket,id,serveur);
 			ClientThreadSend ctS = new ClientThreadSend(clientSocket,id,serveur);
 			
+			ctR.start();
+			ctS.start();
+			
 			clientsThreadR.add(ctR);
 			clientsThreadS.add(ctS);
 			
 			id++;
-			
-			ctR.start();
-			ctS.start();
-			
+
 		}
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);

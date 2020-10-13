@@ -15,10 +15,6 @@ public class ClientThreadSend
 			this.id = id;
 			this.serveur = serveur;
 		}
-		public void run() {
-	   
-	       }
-	
 	
 	public void sendMessage(String msg, int idSend) {
 		try {
