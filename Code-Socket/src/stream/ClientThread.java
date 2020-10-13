@@ -14,10 +14,13 @@ public class ClientThread
 	extends Thread {
 	
 	private Socket clientSocket;
+	private int id;
 	
-	ClientThread(Socket s) {
+	ClientThread(Socket s, int id) {
 		this.clientSocket = s;
+		this.id = id;
 	}
+	
 
  	/**
   	* receives a request from client then sends an echo to the client
