@@ -15,10 +15,16 @@ public class ClientThread
 	
 	private Socket clientSocket;
 	private int id;
+	private EchoServerMultiThreaded serveur;
 	
-	ClientThread(Socket s, int id) {
+	ClientThread(Socket s, int id, EchoServerMultiThreaded serveur) {
 		this.clientSocket = s;
 		this.id = id;
+		this.serveur = serveur;
+	}
+	
+	public Socket getSocket() {
+		return clientSocket;
 	}
 	
 
@@ -30,16 +36,33 @@ public class ClientThread
     	  try {
     		BufferedReader socIn = null;
     		socIn = new BufferedReader(
-    			new InputStreamReader(clientSocket.getInputStream()));    
-    		PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
+    			new InputStreamReader(clientSocket.getInputStream())); //ce qui arrive du client   
+    		//PrintStream socOut = new PrintStream(clientSocket.getOutputStream());//ce que le serveur envoie
     		while (true) {
-    		  String line = socIn.readLine();
-    		  socOut.println(line);
+    		  String line = socIn.readLine();//message du client
+    		  //socOut.println(line);
+    		  if(!line.isEmpty()) {
+    			  serveur.sendMessageToAll(line,this.id);
+    		  }
     		}
     	} catch (Exception e) {
         	System.err.println("Error in EchoServer:" + e); 
         }
        }
+	
+	public void sendMessage(String msg, int idSend) {
+		try {
+			PrintStream socOut = new PrintStream(clientSocket.getOutputStream());//ce que le serveur envoie
+			if(idSend != this.id) {
+				socOut.println("Client "+idSend+" said :"+msg);
+			}else {
+				socOut.println("You said :"+msg);
+			}
+			
+	} catch (Exception e) {
+    	System.err.println("Error in EchoServer:" + e); 
+    }
+	}
   
   }
 

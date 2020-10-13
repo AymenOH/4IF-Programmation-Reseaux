@@ -51,7 +51,7 @@ public class EchoClient {
         	line=stdIn.readLine();
         	if (line.equals(".")) break;
         	socOut.println(line);
-        	System.out.println("echo: " + socIn.readLine());
+        	System.out.println(">>>>> "+socIn.readLine());
         }
       socOut.close();
       socIn.close();
