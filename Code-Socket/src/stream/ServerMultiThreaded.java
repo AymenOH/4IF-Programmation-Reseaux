@@ -63,9 +63,7 @@ public class ServerMultiThreaded  {
        
        synchronized public void sendMessageToAll(String msg,int idSend) {
     	   for(int i = 0;i<clientsThreadS.size();++i) {
-    		   System.out.println("test avant "+i);
     		   clientsThreadS.get(i).sendMessage(msg,idSend);;
-    		   System.out.println("test apres "+i);
     		   
     	   }
        }
