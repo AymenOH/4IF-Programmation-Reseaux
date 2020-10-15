@@ -18,7 +18,7 @@ public class ServerThreadSend
 	public void run() {
 		PrintStream socOut = null;
         BufferedReader stdIn = null;
-
+        Boolean pseudoDefined = false;
         try {
 			socOut= new PrintStream(serverSocket.getOutputStream());
 			stdIn = new BufferedReader(new InputStreamReader(System.in));
@@ -31,9 +31,20 @@ public class ServerThreadSend
 		String line;
 		while (true) {
 	    	try {
-				line=stdIn.readLine();
-				if (line.equals(".")) break;
-		    	socOut.println(line);
+	    		if ( !pseudoDefined ) {
+	    			System.out.print("Veuillez entrer un pseudo : ");
+	    			line = stdIn.readLine();
+	    			socOut.println("pseudo:"+line);
+	    			
+	    		}else {
+	    			line=stdIn.readLine();
+					if (line.equals(".")) {
+						socOut.println("disconnect");
+						break;
+					}
+			    	socOut.println(line);
+	    		}
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

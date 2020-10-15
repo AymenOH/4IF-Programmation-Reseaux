@@ -32,7 +32,7 @@ public class ServerMultiThreaded  {
           System.exit(1);
   	}
 	try {
-		int id = 1;
+		
 		clientsThreadR = new LinkedList<ClientThreadRecieve>();
 		clientsThreadS = new LinkedList<ClientThreadSend>();
 		
@@ -44,8 +44,8 @@ public class ServerMultiThreaded  {
 			System.out.println("Connexion from:" + clientSocket.getInetAddress());
 
 			
-			ClientThreadRecieve ctR = new ClientThreadRecieve(clientSocket,id,serveur);
-			ClientThreadSend ctS = new ClientThreadSend(clientSocket,id,serveur);
+			ClientThreadRecieve ctR = new ClientThreadRecieve(clientSocket,serveur);
+			ClientThreadSend ctS = new ClientThreadSend(clientSocket,serveur);
 			
 			ctR.start();
 			ctS.start();
@@ -53,7 +53,7 @@ public class ServerMultiThreaded  {
 			clientsThreadR.add(ctR);
 			clientsThreadS.add(ctS);
 			
-			id++;
+			
 
 		}
         } catch (Exception e) {
@@ -61,11 +61,33 @@ public class ServerMultiThreaded  {
         }
       }
        
-       synchronized public void sendMessageToAll(String msg,int idSend) {
+       synchronized public void sendMessageToAll(String msg, String pseudoSend) {
     	   for(int i = 0;i<clientsThreadS.size();++i) {
-    		   clientsThreadS.get(i).sendMessage(msg,idSend);;
+    		   clientsThreadS.get(i).sendMessage(msg,pseudoSend);;
     		   
     	   }
+       }
+       synchronized public void removeClient(String pseudo) {
+    	   for(int i = 0 ; i < clientsThreadS.size() ; ++i) {
+       		if(pseudo.equals(clientsThreadS.get(i).getPseudo())) {
+       			clientsThreadR.remove(i);
+       			clientsThreadS.remove(i); 
+       		}
+       	}
+    	  
+       }
+       synchronized public String givePseudoToClient(String proposition) {
+    	   int id = 0;
+    	  String pseudo = proposition;
+    	for(int i = 0 ; i < clientsThreadS.size() ; ++i) {
+    		if(proposition.equals(clientsThreadS.get(i).getPseudo())) {
+    			++id;
+    		}
+    	}
+    	if(id!=0) {
+    		pseudo+= id;
+    	}
+    	return pseudo;
        }
   }
 

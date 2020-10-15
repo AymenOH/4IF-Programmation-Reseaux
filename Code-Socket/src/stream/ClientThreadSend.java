@@ -7,20 +7,26 @@ public class ClientThreadSend
 	extends Thread {
 		
 		private Socket clientSocket;
-		private int id;
-		private ServerMultiThreaded serveur;
+		private String pseudo;
+		private ServerMultiThreaded server;
 		
-		ClientThreadSend(Socket s, int id, ServerMultiThreaded serveur) {
+		ClientThreadSend(Socket s, ServerMultiThreaded server) {
 			this.clientSocket = s;
-			this.id = id;
-			this.serveur = serveur;
+			this.server = server;
+			pseudo="Anonyme";
 		}
-	
-	public void sendMessage(String msg, int idSend) {
+		public String getPseudo() {
+			return pseudo;
+		}
+		public void setPseudo(String pseudo) {
+			this.pseudo = pseudo;
+		}
+	public void sendMessage(String msg, String pseudoSend) {
+		
 		try {
 			PrintStream socOut = new PrintStream(clientSocket.getOutputStream());//ce que le serveur envoie
-			if(idSend != this.id) {
-				socOut.println("Client "+idSend+" said :"+msg);
+			if(!(pseudoSend.equals(pseudo))){
+				socOut.println(pseudo+" said :"+msg);
 			}else {
 				socOut.println("You said :"+msg);
 			}
@@ -29,4 +35,5 @@ public class ClientThreadSend
     	System.err.println("Error in EchoServer:" + e); 
     }
 	}
+	
 }

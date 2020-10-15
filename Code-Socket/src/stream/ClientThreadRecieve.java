@@ -14,19 +14,27 @@ public class ClientThreadRecieve
 	extends Thread {
 	
 	private Socket clientSocket;
-	private int id;
-	private ServerMultiThreaded serveur;
+	private ServerMultiThreaded server;
+	private String pseudo;
 	
-	ClientThreadRecieve(Socket s, int id, ServerMultiThreaded serveur) {
+	ClientThreadRecieve(Socket s, ServerMultiThreaded server) {
 		this.clientSocket = s;
-		this.id = id;
-		this.serveur = serveur;
+		this.server = server;
+		this.pseudo = "Anonyme";
 	}
 	
  	/**
   	* receives a request from client then sends an echo to the client
   	* @param clientSocket the client socket
   	**/
+	public String getPseudo() {
+		return pseudo;
+	}
+	public void setPseudo(String pseudo) {
+		this.pseudo = pseudo;
+	}
+	
+	
 	public void run() {
     	  try {
     		BufferedReader socIn = null;
@@ -34,8 +42,14 @@ public class ClientThreadRecieve
     			new InputStreamReader(clientSocket.getInputStream())); //ce qui arrive du client   
     		while (true) {
     		  String line = socIn.readLine();//message du client
-    		  if(!line.isEmpty()) {
-    			  serveur.sendMessageToAll(line,this.id);
+    		  if(!line.equals("disconnect") && !line.contains("pseudo") ) {
+    			  server.sendMessageToAll(line,pseudo);
+    		  }else if (line.contains("pseudo") ) {
+    			  String tab [] = line.split(":");
+    			  pseudo = server.givePseudoToClient(tab[1]);
+    			  
+    		  }else {
+    			  server.removeClient(pseudo);
     		  }
     		}
     	} catch (Exception e) {
