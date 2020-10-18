@@ -19,8 +19,8 @@ public class ServerMultiThreaded  {
 	* @param EchoServer port
   	* 
   	**/
-	private static LinkedList<ClientThreadRecieve> clientsThreadR;
-	private static LinkedList<ClientThreadSend> clientsThreadS;
+	private static LinkedList<ClientThread> clientsThread;
+
 	
 	
        public static void main(String args[]){ 
@@ -33,8 +33,8 @@ public class ServerMultiThreaded  {
   	}
 	try {
 		
-		clientsThreadR = new LinkedList<ClientThreadRecieve>();
-		clientsThreadS = new LinkedList<ClientThreadSend>();
+		clientsThread = new LinkedList<ClientThread>();
+
 		
 		listenSocket = new ServerSocket(Integer.parseInt(args[0])); //port
 		System.out.println("Server ready..."); 
@@ -44,14 +44,14 @@ public class ServerMultiThreaded  {
 			System.out.println("Connexion from:" + clientSocket.getInetAddress());
 
 			
-			ClientThreadRecieve ctR = new ClientThreadRecieve(clientSocket,serveur);
-			ClientThreadSend ctS = new ClientThreadSend(clientSocket,serveur);
+			ClientThread ct = new ClientThread(clientSocket,serveur);
+
 			
-			ctR.start();
-			ctS.start();
+			ct.start();
+
 			
-			clientsThreadR.add(ctR);
-			clientsThreadS.add(ctS);
+			clientsThread.add(ct);
+
 			
 			
 
@@ -62,16 +62,16 @@ public class ServerMultiThreaded  {
       }
        
        synchronized public void sendMessageToAll(String msg, String pseudoSend) {
-    	   for(int i = 0;i<clientsThreadS.size();++i) {
-    		   clientsThreadS.get(i).sendMessage(msg,pseudoSend);;
+    	   for(int i = 0;i<clientsThread.size();++i) {
+    		   clientsThread.get(i).sendMessage(msg,pseudoSend);;
     		   
     	   }
        }
        synchronized public void removeClient(String pseudo) {
-    	   for(int i = 0 ; i < clientsThreadS.size() ; ++i) {
-       		if(pseudo.equals(clientsThreadS.get(i).getPseudo())) {
-       			clientsThreadR.remove(i);
-       			clientsThreadS.remove(i); 
+    	   for(int i = 0 ; i < clientsThread.size() ; ++i) {
+       		if(pseudo.equals(clientsThread.get(i).getPseudo())) {
+       			clientsThread.remove(i);
+
        		}
        	}
     	  
@@ -79,8 +79,8 @@ public class ServerMultiThreaded  {
        synchronized public String givePseudoToClient(String proposition) {
     	   int id = 0;
     	  String pseudo = proposition;
-    	for(int i = 0 ; i < clientsThreadS.size() ; ++i) {
-    		if(proposition.equals(clientsThreadS.get(i).getPseudo())) {
+    	for(int i = 0 ; i < clientsThread.size() ; ++i) {
+    		if(proposition.equals(clientsThread.get(i).getPseudo())) {
     			++id;
     		}
     	}

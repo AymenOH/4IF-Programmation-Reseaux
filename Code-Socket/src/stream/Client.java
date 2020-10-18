@@ -39,7 +39,7 @@ public class Client {
         System.out.println("Connexion to server "+args[0]+" with port "+args[1]);
         ServerThreadRecieve sr = new ServerThreadRecieve(echoSocket);
         sr.start();
-        ServerThreadSend ss = new ServerThreadSend(echoSocket);
+        ServerThreadSend ss = new ServerThreadSend(echoSocket,sr);
         ss.start();
 
     }

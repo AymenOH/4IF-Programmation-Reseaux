@@ -10,14 +10,14 @@ package stream;
 import java.io.*;
 import java.net.*;
 
-public class ClientThreadRecieve
+public class ClientThread
 	extends Thread {
 	
 	private Socket clientSocket;
 	private ServerMultiThreaded server;
 	private String pseudo;
 	
-	ClientThreadRecieve(Socket s, ServerMultiThreaded server) {
+	ClientThread(Socket s, ServerMultiThreaded server) {
 		this.clientSocket = s;
 		this.server = server;
 		this.pseudo = "Anonyme";
@@ -38,6 +38,7 @@ public class ClientThreadRecieve
 	public void run() {
     	  try {
     		BufferedReader socIn = null;
+    		
     		socIn = new BufferedReader(
     			new InputStreamReader(clientSocket.getInputStream())); //ce qui arrive du client   
     		while (true) {
@@ -50,12 +51,30 @@ public class ClientThreadRecieve
     			  
     		  }else {
     			  server.removeClient(pseudo);
+    			  socIn.close();
+    			  this.stop();
     		  }
     		}
     	} catch (Exception e) {
         	System.err.println("Error in EchoServer:" + e); 
         }
        }
+	
+	public void sendMessage(String msg, String pseudoSend) {
+			
+		try {
+			PrintStream socOut = new PrintStream(clientSocket.getOutputStream());//ce que le serveur envoie
+			if(!(pseudoSend.equals(pseudo))){
+				socOut.println(pseudoSend+" said :"+msg);
+			}else {
+				socOut.println("You said :"+msg);
+			}
+	
+			
+	} catch (Exception e) {
+    	System.err.println("Error in EchoServer:" + e); 
+    }
+	}
 	
   
   }

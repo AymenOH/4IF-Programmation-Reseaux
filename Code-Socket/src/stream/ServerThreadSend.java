@@ -9,9 +9,11 @@ import java.net.Socket;
 public class ServerThreadSend 
 		extends Thread {
 	private Socket serverSocket;
+	private ServerThreadRecieve sr;
 	
-	public ServerThreadSend(Socket serverSocket) {
+	public ServerThreadSend(Socket serverSocket, ServerThreadRecieve sr) {
 		this.serverSocket = serverSocket;
+		this.sr = sr;
 	}
 	
 	
@@ -35,11 +37,13 @@ public class ServerThreadSend
 	    			System.out.print("Veuillez entrer un pseudo : ");
 	    			line = stdIn.readLine();
 	    			socOut.println("pseudo:"+line);
+	    			pseudoDefined = true;
 	    			
 	    		}else {
 	    			line=stdIn.readLine();
 					if (line.equals(".")) {
 						socOut.println("disconnect");
+						
 						break;
 					}
 			    	socOut.println(line);
@@ -52,7 +56,11 @@ public class ServerThreadSend
 			}
 	    }
 		try {
+			socOut.close();
+			stdIn.close();
 			serverSocket.close();
+			sr.stop();
+			this.stop();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
