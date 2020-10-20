@@ -203,6 +203,7 @@ public class WebServer {
             	outBytes.write(sendHeader("404 Not Found").getBytes());
             	outBytes.write("\r\n".getBytes());
             }
+            outBytes.flush();
         } catch (Exception e) {
             System.out.println(e);
         }
