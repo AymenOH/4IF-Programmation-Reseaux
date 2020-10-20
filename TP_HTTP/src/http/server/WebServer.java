@@ -90,14 +90,14 @@ public class WebServer {
                 }
 
                 /** On traite le requête dans une méthode séparée */
-                //handleRequest(header, out, in);
+                handleRequest(header, out, in);
 
                 remote.close();
 
             } catch (Exception e) { // Erreur lors de la connexion du client
                 System.out.println(e);
                 try { // essai de prévenir le client, pas sûr que le message arrive à destination
-                    //out.write(sendHeader("500 Internal Server Error").getBytes());
+                    out.write(sendHeader("500 Internal Server Error").getBytes());
                     out.flush();
                     remote.close();
                 } catch (Exception e2) {
@@ -140,7 +140,7 @@ public class WebServer {
                 break;
             default: // cas d'une requete non implémentée sur notre serveur (par exemple VIEW)
                 try {
-                    //outBytes.write(sendHeader("501 Not Implemented").getBytes());
+                    outBytes.write(sendHeader("501 Not Implemented").getBytes());
                     outBytes.flush();
                 } catch (Exception e) {
                     System.out.println(e);
