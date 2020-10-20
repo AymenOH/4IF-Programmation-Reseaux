@@ -31,9 +31,9 @@ public class WebServer {
 	/* Chemin absolu du repertoire des fichiers ressources utilisés par le server (fichiers statique de tout format (texte, html, média...)) */
 	protected static final String resourceDirectory = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/";
 	/* Chemin absolu de la page d'acceuil/index du serveur */
-	protected static final String index = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP HTTP/web/index.html";
+	protected static final String index = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/index.html";
 	/* Chemin absolu de la page web envoyee en cas d'erreur 404 */
-    protected static final String fileNotFound = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP HTTP/web/notfound.html";
+    protected static final String fileNotFound = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/notfound.html";
 
   /**
    * WebServer constructor.
@@ -127,7 +127,7 @@ public class WebServer {
                 getRequest(path, outBytes);
                 break;
             case "HEAD":
-                //headRequest(outBytes, path);
+                headRequest(path, outBytes);
                 break;
             case "POST":
                 //postRequest(path, outBytes, in);
@@ -166,16 +166,7 @@ public class WebServer {
         }
     }
 
-    /**
-     * Implémentation du traitement d'une requete GET - cette méthode retourne une page WEB identifiée par son URL
-     * Tente d'ouvrir et de lire la ressource demandee et de l'envoyer au client, sous forme de bytes.
-     * /!\ on aurait pu envoyer sous forme de string les fichiers txt ou html... mais ici la méthode est générale et peut aussi être amené à envoyer des medias
-     * On renvoie le code 200 OK si le fichier a ete trouve et 404 Not Found sinon.
-     * Le corps de la reponse est le contenu du fichier, transmis en bytes, ou bien le contenu de la page fileNotFound du serveur
-     *
-     * @param outBytes  Flux d'ecriture binaire vers le socket client auquel il faut envoyer une reponse.
-     * @param path Chemin du fichier que le client veut consulter.
-     */
+   
     public void getRequest(String path, BufferedOutputStream outBytes) {
         try {
             if (path.equals("")) {
@@ -199,6 +190,23 @@ public class WebServer {
         }
     }
     
+    public void headRequest(String path, BufferedOutputStream outBytes) {
+        try {
+            
+            path = resourceDirectory + path; // si une resource est demandée on la recherche dans le répertoire de resssources du serveur
+            // un fichier est demandé
+            File resource = new File(path);
+            if (resource.exists() && resource.isFile()) { // Si la ressource demandée existe
+                outBytes.write(sendHeader("200 OK", path, resource.length()).getBytes());
+                outBytes.write("\r\n".getBytes());
+            } else { // la ressource n'existe pas, on envoie l'erreur 404
+            	outBytes.write(sendHeader("404 Not Found").getBytes());
+            	outBytes.write("\r\n".getBytes());
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
     protected String sendHeader(String status) {
         String header = "HTTP/1.0 " + status + "\r\n";
         header += "Server: Bot\r\n";
