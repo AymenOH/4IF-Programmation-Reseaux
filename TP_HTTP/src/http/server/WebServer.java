@@ -7,6 +7,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -130,7 +131,7 @@ public class WebServer {
                 headRequest(path, outBytes);
                 break;
             case "POST":
-                //postRequest(path, outBytes, in);
+                postRequest(path, outBytes, in);
                 break;
             case "PUT":
                 //putRequest(path, outBytes, in);
@@ -189,6 +190,52 @@ public class WebServer {
             System.out.println(e);
         }
     }
+    
+    /**
+     * Envoie d'une réponse à une requete POST - Implementation de la methode HTTP POST.
+     * Similaire à la méthode putRequest à la seule différence que dans le cas d'édition d'un fichier existant
+     * post écrit le contenu à la suite de celui du fichier et ne l'écrase pas
+     */
+    public void postRequest(String path,BufferedOutputStream outBytes, BufferedReader in) {
+        // Similaire à put sauf qu'on n'écrase pas le contenu du fichier
+        try {
+            File resource = new File(resourceDirectory + path);
+            boolean newFile = resource.createNewFile(); // newFile vaut vrai si le fichier est créé
+
+            BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(resource,resource.exists())); // Ouverture d'un flux d'ecriture binaire vers le fichier
+            /** Parcourt des informations recues dans le body de la requete PUT dans le fichier destination */
+            byte[] buffer = new byte[1024];
+            String lineBody = in.readLine();
+            while (lineBody!=null && !lineBody.equals("")) {
+                System.out.println("line :"+lineBody);
+                lineBody = in.readLine();
+                fileOut.write(lineBody.getBytes(), 0, lineBody.getBytes().length);
+                fileOut.write("\r\n".getBytes(), 0, "\r\n".getBytes().length);
+            }
+            fileOut.flush(); // écriture des données
+            fileOut.close();  // fermeture flux ecriture
+
+            if (newFile) {
+                outBytes.write(sendHeader("201 Created").getBytes()); // si le fichier est nouveau
+                outBytes.write("\r\n".getBytes());
+            } else {
+                outBytes.write(sendHeader("200 OK").getBytes()); // si le fichier existait déjà
+                outBytes.write("\r\n".getBytes());
+            }
+            outBytes.flush();
+        } catch (Exception e){
+            e.printStackTrace();
+            try {
+                outBytes.write(sendHeader("500 Internal Server Error").getBytes());
+                outBytes.write("\r\n".getBytes());
+                outBytes.flush();
+            } catch (Exception e2) {
+                System.out.println(e);
+            }
+
+        }
+    }
+
     
     public void headRequest(String path, BufferedOutputStream outBytes) {
         try {
