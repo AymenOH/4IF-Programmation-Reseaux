@@ -50,13 +50,17 @@ public class ClientThread
     			  pseudo = server.givePseudoToClient(tab[1]);
     			  
     		  }else {
+    			  System.out.println("disco test 1 "+pseudo);
     			  server.removeClient(pseudo);
+    			  System.out.println("disco test 2 "+pseudo);
     			  socIn.close();
-    			  this.stop();
+    			  System.out.println("disco test 3 "+pseudo);
+    			  clientSocket.close();
+    			  System.out.println("disco test 4 "+pseudo);
     		  }
     		}
     	} catch (Exception e) {
-        	System.err.println("Error in EchoServer:" + e); 
+        	System.err.println("Error in ClientThread:" + e); 
         }
        }
 	

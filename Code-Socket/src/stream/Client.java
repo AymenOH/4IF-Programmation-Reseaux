@@ -6,6 +6,7 @@
  */
 package stream;
 
+
 import java.io.*;
 import java.net.*;
 
@@ -18,29 +19,7 @@ public class Client {
   **/
     public static void main(String[] args) throws IOException {
 
-        Socket echoSocket = null;
-
-        if (args.length != 2) {
-          System.out.println("Usage: java EchoClient <EchoServer host> <EchoServer port>");
-          System.exit(1);
-        }
-
-        try {
-      	    // creation socket ==> connexion
-      	    echoSocket = new Socket(args[0],new Integer(args[1]).intValue());
-        } catch (UnknownHostException e) {
-            System.err.println("Don't know about host:" + args[0]);
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for "
-                               + "the connection to:"+ args[0]);
-            System.exit(1);
-        }
-        System.out.println("Connexion to server "+args[0]+" with port "+args[1]);
-        ServerThreadRecieve sr = new ServerThreadRecieve(echoSocket);
-        sr.start();
-        ServerThreadSend ss = new ServerThreadSend(echoSocket,sr);
-        ss.start();
+        ChatWindow chat = new ChatWindow();
 
     }
 }

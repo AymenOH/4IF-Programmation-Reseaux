@@ -10,10 +10,11 @@ public class ServerThreadSend
 		extends Thread {
 	private Socket serverSocket;
 	private ServerThreadRecieve sr;
-	
-	public ServerThreadSend(Socket serverSocket, ServerThreadRecieve sr) {
+	private ChatWindow chat;
+	public ServerThreadSend(Socket serverSocket, ServerThreadRecieve sr,ChatWindow chat) {
 		this.serverSocket = serverSocket;
 		this.sr = sr;
+		this.chat = chat;
 	}
 	
 	
@@ -47,6 +48,7 @@ public class ServerThreadSend
 						break;
 					}
 			    	socOut.println(line);
+			    	
 	    		}
 				
 			} catch (IOException e) {
@@ -58,9 +60,9 @@ public class ServerThreadSend
 		try {
 			socOut.close();
 			stdIn.close();
+			sr.socIn.close();;
 			serverSocket.close();
-			sr.stop();
-			this.stop();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

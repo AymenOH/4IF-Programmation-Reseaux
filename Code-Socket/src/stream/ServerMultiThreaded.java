@@ -20,7 +20,8 @@ public class ServerMultiThreaded  {
   	* 
   	**/
 	private static LinkedList<ClientThread> clientsThread;
-
+	/* Chemin absolu du repertoire des fichiers ressources utilisés par le server (fichiers statique de tout format (texte, html, 	média...)) */
+	protected static final String historicPath = "C:/Users/twinss/git/4IF-Programmation-Reseaux/Code-Socket/src/stream/historic.txt";
 	
 	
        public static void main(String args[]){ 
@@ -63,10 +64,29 @@ public class ServerMultiThreaded  {
        
        synchronized public void sendMessageToAll(String msg, String pseudoSend) {
     	   for(int i = 0;i<clientsThread.size();++i) {
-    		   clientsThread.get(i).sendMessage(msg,pseudoSend);;
-    		   
+    		   clientsThread.get(i).sendMessage(msg,pseudoSend);
+    	   }
+    	   
+    	   saveMessage(msg,pseudoSend);
+    	   
+       }
+       
+       synchronized public void saveMessage(String msg, String pseudoSend) {
+    	   
+    	   String message = "-->" + pseudoSend + " : " + msg;
+    	   try {
+    	   File resource = new File(historicPath);
+           BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(resource,resource.exists())); // Ouverture d'un 			flux d'ecriture binaire vers le fichier
+           fileOut.write(message.getBytes(), 0, message.getBytes().length);
+           fileOut.write("\r\n".getBytes(), 0, "\r\n".getBytes().length);
+           fileOut.flush(); // écriture des données
+           fileOut.close();  // fermeture flux ecriture
+           
+    	   }catch(Exception e){
+               e.printStackTrace();
     	   }
        }
+       
        synchronized public void removeClient(String pseudo) {
     	   for(int i = 0 ; i < clientsThread.size() ; ++i) {
        		if(pseudo.equals(clientsThread.get(i).getPseudo())) {

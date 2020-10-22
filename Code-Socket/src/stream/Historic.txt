@@ -1,0 +1,17 @@
+-->Yann : SAlut ?
+-->Aymen : ça va ?
+-->Yann : oui et toi ?
+-->JUL : wech alors ?
+-->JUL : rien ?
+-->Aymen : blabla
+-->yann : oui
+-->aymen : non
+-->yann : no
+-->yann : oui
+-->aymen : toto
+-->aymen : salut
+-->yann : yo
+-->Aymen : test1
+-->Yann : test2
+-->Aymen : test3
+-->Yann : test4

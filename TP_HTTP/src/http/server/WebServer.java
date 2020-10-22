@@ -30,11 +30,11 @@ import java.net.Socket;
 public class WebServer {
 	
 	/* Chemin absolu du repertoire des fichiers ressources utilisés par le server (fichiers statique de tout format (texte, html, média...)) */
-	protected static final String resourceDirectory = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/";
+	protected static final String resourceDirectory = "C:/Users/twinss/git/4IF-Programmation-Reseaux/TP_HTTP/web/";
 	/* Chemin absolu de la page d'acceuil/index du serveur */
-	protected static final String index = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/index.html";
+	protected static final String index = "C:/Users/twinss/git/4IF-Programmation-Reseaux/TP_HTTP/web/index.html";
 	/* Chemin absolu de la page web envoyee en cas d'erreur 404 */
-    protected static final String fileNotFound = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/notfound.html";
+    protected static final String fileNotFound = "C:/Users/twinss/git/4IF-Programmation-Reseaux/TP_HTTP/web/notfound.html";
 
   /**
    * WebServer constructor.
@@ -70,19 +70,11 @@ public class WebServer {
                 // Ouverture d'un flux de lecture pour lire en string/ligne par ligne la requête envoyée par le client
                 BufferedReader in = new BufferedReader(new InputStreamReader(remote.getInputStream()));
 
-                /** Lecture des données envoyées par le client
-                 * We basically ignore it,
-                 * stop reading once a blank line is hit. This
-                 * blank line signals the end of the client HTTP
-                 * headers.
-                 */
+               
 
                 String line = in.readLine();
                 String header = "";
 
-                /** Parcourt du header jusqu'à sa fin
-                 On considère ici que le format du header est respecté, s'il se finit par une ligne vide / pas d'autre verif
-                 Sinon on aurait pu générer une erreur 400 bad request si le format n'était pas respecté */
                 header = line;
                 while (!line.equals("") && line != null) {
                     header += line;
@@ -90,7 +82,7 @@ public class WebServer {
                     System.out.println(line);
                 }
 
-                /** On traite le requête dans une méthode séparée */
+              
                 handleRequest(header, out, in);
 
                 remote.close();
@@ -107,14 +99,8 @@ public class WebServer {
             }
         }
     }
-    
-    /** Traitement de la requête du client
-     * Le serveur implémente ici les requêtes de type GET, PUT, POST, HEAD et DELETE
-     * @param header en-tete de la requete
-     * @param outBytes flux d'écriture en byte sur le socket Client
-     * @param in flux de lecture des données envoyées par le client, ce buffer a déjà lu l'en-tete
-     */
-    public void handleRequest(String header, BufferedOutputStream outBytes, BufferedReader in) {
+  
+    public void handleRequest(String header, BufferedOutputStream out, BufferedReader in) {
         String[] params = header.split(" ");
         String method, path;
 
@@ -125,24 +111,24 @@ public class WebServer {
         /** On traite différement la requête suivant son type */
         switch (method) {
             case "GET":
-                getRequest(path, outBytes);
+                getRequest(path, out);
                 break;
             case "HEAD":
-                headRequest(path, outBytes);
+                headRequest(path, out);
                 break;
             case "POST":
-                postRequest(path, outBytes, in);
+                postRequest(path, out, in);
                 break;
             case "PUT":
-                //putRequest(path, outBytes, in);
+                putRequest(path, out, in);
                 break;
             case "DELETE":
-                //deleteRequest(path, outBytes);
+                deleteRequest(path, out);
                 break;
             default: // cas d'une requete non implémentée sur notre serveur (par exemple VIEW)
                 try {
-                    outBytes.write(sendHeader("501 Not Implemented").getBytes());
-                    outBytes.flush();
+                    out.write(sendHeader("501 Not Implemented").getBytes());
+                    out.flush();
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -168,7 +154,7 @@ public class WebServer {
     }
 
    
-    public void getRequest(String path, BufferedOutputStream outBytes) {
+    public void getRequest(String path, BufferedOutputStream out) {
         try {
             if (path.equals("")) {
                 path = index; // si rien n'est demandé on renvoie le fichier index
@@ -178,33 +164,29 @@ public class WebServer {
             // un fichier est demandé
             File resource = new File(path);
             if (resource.exists() && resource.isFile()) { // Si la ressource demandée existe
-                outBytes.write(sendHeader("200 OK", path, resource.length()).getBytes());
+                out.write(sendHeader("200 OK", path, resource.length()).getBytes());
                 /** Envoie du contenu du fichier */
-                sendFile(outBytes, resource);
+                sendFile(out, resource);
             } else { // la ressource n'existe pas, on envoie l'erreur 404
                 resource = new File(fileNotFound);
-                outBytes.write(sendHeader("404 Not Found", fileNotFound, resource.length()).getBytes());
-                sendFile(outBytes, resource);
+                out.write(sendHeader("404 Not Found", fileNotFound, resource.length()).getBytes());
+                sendFile(out, resource);
             }
         } catch (Exception e) {
             System.out.println(e);
         }
     }
     
-    /**
-     * Envoie d'une réponse à une requete POST - Implementation de la methode HTTP POST.
-     * Similaire à la méthode putRequest à la seule différence que dans le cas d'édition d'un fichier existant
-     * post écrit le contenu à la suite de celui du fichier et ne l'écrase pas
-     */
-    public void postRequest(String path,BufferedOutputStream outBytes, BufferedReader in) {
+   
+    public void postRequest(String path,BufferedOutputStream out, BufferedReader in) {
         // Similaire à put sauf qu'on n'écrase pas le contenu du fichier
         try {
             File resource = new File(resourceDirectory + path);
             boolean newFile = resource.createNewFile(); // newFile vaut vrai si le fichier est créé
+            System.out.println("new file vaut : "+newFile);
 
             BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(resource,resource.exists())); // Ouverture d'un flux d'ecriture binaire vers le fichier
             /** Parcourt des informations recues dans le body de la requete PUT dans le fichier destination */
-            byte[] buffer = new byte[1024];
             String lineBody = in.readLine();
             while (lineBody!=null && !lineBody.equals("")) {
                 System.out.println("line :"+lineBody);
@@ -216,45 +198,126 @@ public class WebServer {
             fileOut.close();  // fermeture flux ecriture
 
             if (newFile) {
-                outBytes.write(sendHeader("201 Created").getBytes()); // si le fichier est nouveau
-                outBytes.write("\r\n".getBytes());
+                out.write(sendHeader("201 Created").getBytes()); // si le fichier est nouveau
+                out.write("\r\n".getBytes());
             } else {
-                outBytes.write(sendHeader("200 OK").getBytes()); // si le fichier existait déjà
-                outBytes.write("\r\n".getBytes());
+                out.write(sendHeader("200 OK").getBytes()); // si le fichier existait déjà
+                out.write("\r\n".getBytes());
             }
-            outBytes.flush();
+            out.flush();
         } catch (Exception e){
             e.printStackTrace();
             try {
-                outBytes.write(sendHeader("500 Internal Server Error").getBytes());
-                outBytes.write("\r\n".getBytes());
-                outBytes.flush();
+                out.write(sendHeader("500 Internal Server Error").getBytes());
+                out.write("\r\n".getBytes());
+                out.flush();
             } catch (Exception e2) {
                 System.out.println(e);
             }
 
         }
     }
+    
+    public void putRequest(String path,BufferedOutputStream out, BufferedReader in) {
+      
+        try {
+            File resource = new File(resourceDirectory + path);
+            boolean newFile = resource.createNewFile(); // newFile vaut vrai si le fichier est créé
+            System.out.println("new file vaut : "+newFile);
+            if(!newFile) { 
+                PrintWriter pw = new PrintWriter(resource);
+                pw.close();
+            }
+            
+
+            BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(resource,resource.exists())); // Ouverture d'un flux d'ecriture binaire vers le fichier
+            /** Parcourt des informations recues dans le body de la requete PUT dans le fichier destination */
+            String lineBody = in.readLine();
+            while (lineBody!=null && !lineBody.equals("")) {
+                System.out.println("line :"+lineBody);
+                lineBody = in.readLine();
+                fileOut.write(lineBody.getBytes(), 0, lineBody.getBytes().length);
+                fileOut.write("\r\n".getBytes(), 0, "\r\n".getBytes().length);
+            }
+            fileOut.flush(); // écriture des données
+            fileOut.close();  // fermeture flux ecriture
+
+            if (newFile) {
+                out.write(sendHeader("201 Created").getBytes()); // si le fichier est nouveau
+                out.write("\r\n".getBytes());
+            } else {
+                out.write(sendHeader("200 OK").getBytes()); // si le fichier existait déjà
+                out.write("\r\n".getBytes());
+            }
+            out.flush();
+        } catch (Exception e){
+            e.printStackTrace();
+            try {
+                out.write(sendHeader("500 Internal Server Error").getBytes());
+                out.write("\r\n".getBytes());
+                out.flush();
+            } catch (Exception e2) {
+                System.out.println(e);
+            }
+
+        }
+    }
+    
+    public void deleteRequest(String path, BufferedOutputStream out) {
+        try {
+            File resource = new File(resourceDirectory+path);
+            // Suppression du fichier
+            boolean deleted = false;
+            boolean existed = false;
+            if((existed = resource.exists()) && resource.isFile()) {
+                deleted = resource.delete();
+            }
+
+            // Envoi du Header
+            if(deleted) {
+                out.write(sendHeader("204 No Content").getBytes());
+                out.write("\r\n".getBytes());
+            } else if (!existed) {
+                out.write(sendHeader("404 Not Found").getBytes());
+                out.write("\r\n".getBytes());
+            } else {
+                // Le fichier a ete trouve mais n'a pas pu etre supprime
+                out.write(sendHeader("403 Forbidden").getBytes());
+                out.write("\r\n".getBytes());
+            }
+            // Envoi des donnees
+            out.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // En cas d'erreur on essaie d'avertir le client
+            try {
+                out.write(sendHeader("500 Internal Server Error").getBytes());
+                out.write("\r\n".getBytes());
+                out.flush();
+            } catch (Exception e2) {};
+        }
+    }
 
     
-    public void headRequest(String path, BufferedOutputStream outBytes) {
+    public void headRequest(String path, BufferedOutputStream out) {
         try {
             
             path = resourceDirectory + path; // si une resource est demandée on la recherche dans le répertoire de resssources du serveur
             // un fichier est demandé
             File resource = new File(path);
             if (resource.exists() && resource.isFile()) { // Si la ressource demandée existe
-                outBytes.write(sendHeader("200 OK", path, resource.length()).getBytes());
-                outBytes.write("\r\n".getBytes());
+                out.write(sendHeader("200 OK", path, resource.length()).getBytes());
+                out.write("\r\n".getBytes());
             } else { // la ressource n'existe pas, on envoie l'erreur 404
-            	outBytes.write(sendHeader("404 Not Found").getBytes());
-            	outBytes.write("\r\n".getBytes());
+            	out.write(sendHeader("404 Not Found").getBytes());
+            	out.write("\r\n".getBytes());
             }
-            outBytes.flush();
+            out.flush();
         } catch (Exception e) {
             System.out.println(e);
         }
     }
+    
     protected String sendHeader(String status) {
         String header = "HTTP/1.0 " + status + "\r\n";
         header += "Server: Bot\r\n";
