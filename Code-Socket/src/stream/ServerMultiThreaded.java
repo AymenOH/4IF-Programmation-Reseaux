@@ -9,6 +9,7 @@ package stream;
 
 import java.io.*;
 import java.net.*;
+import java.util.Date;
 import java.util.LinkedList;
 
 
@@ -69,9 +70,12 @@ public class ServerMultiThreaded  {
        synchronized public void saveMessage(String msg, String pseudoSend) {
     	   
     	   String message = "-->" + pseudoSend + " : " + msg;
+    	   Date date = new Date();
     	   try {
     	   File resource = new File(historicPath);
-           BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(resource,resource.exists())); // Ouverture d'un 			flux d'ecriture binaire vers le fichier
+           BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(resource,resource.exists())); // Ouverture d'un flux d'ecriture binaire vers le fichier
+           fileOut.write(date.toString().getBytes(), 0, date.toString().length() );
+           fileOut.write(" : ".getBytes(), 0, " : ".length() );
            fileOut.write(message.getBytes(), 0, message.getBytes().length);
            fileOut.write("\r\n".getBytes(), 0, "\r\n".getBytes().length);
            fileOut.flush(); // écriture des données
