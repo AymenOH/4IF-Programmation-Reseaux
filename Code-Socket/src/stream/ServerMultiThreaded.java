@@ -20,7 +20,7 @@ public class ServerMultiThreaded  {
   	* 
   	**/
 	private static LinkedList<ClientThread> clientsThread;
-	/* Chemin absolu du repertoire des fichiers ressources utilisés par le server (fichiers statique de tout format (texte, html, 	média...)) */
+	/* Chemin absolu du fichier qui contient l'historique des messages*/
 	protected static final String historicPath = "C:/Users/twinss/git/4IF-Programmation-Reseaux/Code-Socket/src/stream/historic.txt";
 	
 	
@@ -44,17 +44,12 @@ public class ServerMultiThreaded  {
 			Socket clientSocket = listenSocket.accept();
 			System.out.println("Connexion from:" + clientSocket.getInetAddress());
 
-			
 			ClientThread ct = new ClientThread(clientSocket,serveur);
 
-			
 			ct.start();
 
-			
 			clientsThread.add(ct);
 
-			
-			
 
 		}
         } catch (Exception e) {
