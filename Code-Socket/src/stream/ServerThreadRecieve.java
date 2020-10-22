@@ -25,25 +25,30 @@ public class ServerThreadRecieve
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit(1);
 		}
 		while (true) {
-	    	try {
+	    	
 				//System.out.println(">>>>> "+socIn.readLine());
-				String msg = socIn.readLine();
-        		chat.textAreaChatIn.append(msg);
-				
-	            
+				String msg;
+				try {
+					msg = socIn.readLine();
+					chat.textAreaChatIn.append(msg+"\r\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+				}
+	    }
+	}
+	
+	 public void disconnect() {
+	    	try {
+				socIn.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1);
+				//e.printStackTrace();
 			}
+	
 	    }
-		
-
-
-	}
 	
 	
 }

@@ -13,32 +13,23 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.awt.event.ActionEvent;
-public class ChatWindow {
+import java.awt.BorderLayout;
+import java.awt.Color;
+public class ChatWindow implements ActionListener {
 
 	protected JFrame frmChat;
 	protected JTextField textFieldPseudo;
 	protected JTextField textFieldServAddr;
 	protected JTextField textFieldServPort;
-	protected JTextField textFieldChatOut;
 	protected JButton btnNewButtonConnect;
 	protected JButton btnNewButtonDisconnect;
+	protected JButton btnNewButtonSend;
 	protected TextArea textAreaChatIn;
+	protected JTextField textFieldChatOut;
+	protected Socket echoSocket;
+	protected ServerThreadRecieve sr;
+	protected ServerThreadSend ss;
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ChatWindow window = new ChatWindow();
-					window.frmChat.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
@@ -51,30 +42,32 @@ public class ChatWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		Socket echoSocket = null;
+		ServerThreadRecieve sr = null;
+		ServerThreadSend ss = null;
 		frmChat = new JFrame();
 		frmChat.setResizable(false);
-		frmChat.setTitle("chat\r\n");
+		frmChat.setTitle("Chat TCP\r\n");
 		frmChat.setSize(561,754);
 		frmChat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmChat.setVisible(true);
+		
 
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(10, 11, 525, 95);
-		frmChat.getContentPane().add(panel);
 		panel.setLayout(null);
 		
 		textFieldPseudo = new JTextField();
 		textFieldPseudo.setColumns(10);
-		textFieldPseudo.setBounds(429, 11, 86, 20);
+		textFieldPseudo.setBounds(77, 11, 86, 20);
 		panel.add(textFieldPseudo);
 		
 		JLabel lblNewLabel = new JLabel("Pseudo");
-		lblNewLabel.setBounds(21, 11, 46, 14);
+		lblNewLabel.setBounds(21, 14, 46, 14);
 		panel.add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("Server Address");
-		lblNewLabel_1.setBounds(175, 14, 80, 14);
+		lblNewLabel_1.setBounds(173, 14, 80, 14);
 		panel.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_2 = new JLabel("Server Port");
@@ -83,46 +76,45 @@ public class ChatWindow {
 		
 		textFieldServPort = new JTextField();
 		textFieldServPort.setColumns(10);
-		textFieldServPort.setBounds(260, 11, 86, 20);
+		textFieldServPort.setBounds(441, 11, 86, 20);
 		panel.add(textFieldServPort);
 		
 		textFieldServAddr = new JTextField();
-		textFieldServAddr.setBounds(72, 11, 86, 20);
+		textFieldServAddr.setBounds(265, 11, 86, 20);
 		panel.add(textFieldServAddr);
 		textFieldServAddr.setColumns(10);
 		
 		btnNewButtonConnect = new JButton("Connect");
-		btnNewButtonConnect.addActionListener((ActionListener) this);
+		btnNewButtonConnect.addActionListener(this);
 		btnNewButtonConnect.setBounds(289, 61, 89, 23);
 		panel.add(btnNewButtonConnect);
 		
 		btnNewButtonDisconnect = new JButton("Disconnect");
-		btnNewButtonDisconnect.addActionListener((ActionListener) this);
+		btnNewButtonDisconnect.setEnabled(false);
+		btnNewButtonDisconnect.addActionListener(this);
 		btnNewButtonDisconnect.setBounds(403, 61, 89, 23);
 		panel.add(btnNewButtonDisconnect);
 		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(10, 117, 525, 403);
-		frmChat.getContentPane().add(panel_1);
-		panel_1.setLayout(null);
-		
 		textAreaChatIn = new TextArea();
-		textAreaChatIn.setBounds(10, 10, 505, 383);
-		panel_1.add(textAreaChatIn);
-		
-		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(10, 529, 525, 163);
-		frmChat.getContentPane().add(panel_2);
-		panel_2.setLayout(null);
+		textAreaChatIn.setBounds(10, 128, 535, 383);
+		panel.add(textAreaChatIn);
 		
 		textFieldChatOut = new JTextField();
-		textFieldChatOut.setBounds(10, 11, 505, 107);
-		panel_2.add(textFieldChatOut);
+		textFieldChatOut.setBackground(new Color(255, 255, 255));
+		textFieldChatOut.setEnabled(false);
+		textFieldChatOut.setBounds(21, 537, 506, 118);
+		panel.add(textFieldChatOut);
 		textFieldChatOut.setColumns(10);
 		
-		JButton btnNewButtonSend = new JButton("Send");
-		btnNewButtonSend.setBounds(376, 129, 89, 23);
-		panel_2.add(btnNewButtonSend);
+		btnNewButtonSend = new JButton("Send");
+		btnNewButtonSend.addActionListener(this);
+		btnNewButtonSend.setEnabled(false);
+		btnNewButtonSend.setBounds(403, 675, 89, 23);
+		panel.add(btnNewButtonSend);
+		
+		frmChat.getContentPane().add(panel);
+		frmChat.setVisible(true);
+		
 		
 		
 		
@@ -130,7 +122,8 @@ public class ChatWindow {
 	
 	
 		public void actionPerformed(ActionEvent e){
-			Socket echoSocket = null;
+			
+			String message;
 			
 			if(e.getSource()==btnNewButtonConnect) {
 				String serverAddr = textFieldServAddr.getText();
@@ -151,12 +144,48 @@ public class ChatWindow {
 		        }
 		        
 		        System.out.println("Connexion to server "+serverAddr+" with port "+serverPort);
+		        textAreaChatIn.append("Connexion to server "+serverAddr+" with port "+serverPort+"\r\n");
 		        
-		        ServerThreadRecieve sr = new ServerThreadRecieve(echoSocket,this);
+		        
+		        sr = new ServerThreadRecieve(echoSocket,this);
 		        sr.start();
-		        ServerThreadSend ss = new ServerThreadSend(echoSocket,sr,this,pseudo);
+		        ss = new ServerThreadSend(echoSocket,this,pseudo);
 		        ss.start();
+		        btnNewButtonDisconnect.setEnabled(true);
+		        btnNewButtonConnect.setEnabled(false);
+		        btnNewButtonSend.setEnabled(true);
+		        textFieldChatOut.setEnabled(true);
+			}
+			else if(e.getSource()==btnNewButtonDisconnect) {
+				
+				ss.disconnect();
+				sr.disconnect();
+				textAreaChatIn.append("You have been disconnected ! \r\n");
+				btnNewButtonDisconnect.setEnabled(false);
+				btnNewButtonConnect.setEnabled(true);
+				btnNewButtonSend.setEnabled(false);
+				textFieldChatOut.setEnabled(false);
+				try {
+					ss.stop();
+					sr.stop();
+					echoSocket.close();
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				try {
+					echoSocket.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
+			}else if(e.getSource()==btnNewButtonSend) {
+				message = textFieldChatOut.getText();
+				ss.sendMessage(message);
+				textFieldChatOut.setText("");
+				
 			}
 		}
-	
 }

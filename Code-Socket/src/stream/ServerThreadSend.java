@@ -11,63 +11,37 @@ public class ServerThreadSend
 	private Socket serverSocket;
 	private ServerThreadRecieve sr;
 	private ChatWindow chat;
-	public ServerThreadSend(Socket serverSocket, ServerThreadRecieve sr,ChatWindow chat) {
+	private String pseudo;
+	private PrintStream socOut;
+	
+	public ServerThreadSend(Socket serverSocket, ChatWindow chat, String pseudo) {
 		this.serverSocket = serverSocket;
-		this.sr = sr;
 		this.chat = chat;
+		this.pseudo = pseudo;
 	}
 	
 	
 	public void run() {
-		PrintStream socOut = null;
-        BufferedReader stdIn = null;
-        Boolean pseudoDefined = false;
+		
         try {
 			socOut= new PrintStream(serverSocket.getOutputStream());
-			stdIn = new BufferedReader(new InputStreamReader(System.in));
+			socOut.println("pseudo:"+pseudo);
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			System.exit(1);
 		}
-	    
-		String line;
-		while (true) {
-	    	try {
-	    		if ( !pseudoDefined ) {
-	    			System.out.print("Veuillez entrer un pseudo : ");
-	    			line = stdIn.readLine();
-	    			socOut.println("pseudo:"+line);
-	    			pseudoDefined = true;
-	    			
-	    		}else {
-	    			line=stdIn.readLine();
-					if (line.equals(".")) {
-						socOut.println("disconnect");
-						
-						break;
-					}
-			    	socOut.println(line);
-			    	
-	    		}
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1);
-			}
-	    }
-		try {
-			socOut.close();
-			stdIn.close();
-			sr.socIn.close();;
-			serverSocket.close();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
+
+}
 	
+    public void sendMessage(String msg) {
+    	socOut.println(msg);
+    }
+    
+    public void disconnect() {
+    	socOut.println("disconnect");
+    	socOut.close();
+ 
+    	
+    }
 }
