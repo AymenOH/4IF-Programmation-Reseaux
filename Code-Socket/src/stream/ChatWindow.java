@@ -111,7 +111,7 @@ public class ChatWindow implements ActionListener {
 		
 		textAreaChatIn = new JTextPane();
 		textAreaChatIn.setBounds(10, 128, 535, 383);
-		//panel.add(textAreaChatIn);
+		
 		
 		doc = textAreaChatIn.getStyledDocument();
         left = new SimpleAttributeSet();
@@ -123,6 +123,7 @@ public class ChatWindow implements ActionListener {
         StyleConstants.setForeground(right, Color.WHITE);
         StyleConstants.setBackground(right, Color.BLUE);
         JScrollPane scroll = new JScrollPane(textAreaChatIn);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setBounds(10, 128, 535, 383);
@@ -167,6 +168,7 @@ public class ChatWindow implements ActionListener {
 	
 		       try { 
 		      	    echoSocket = new Socket(serverAddr,new Integer(serverPort).intValue());
+		      	    
 		       
 			 } catch (UnknownHostException t) {
 		            System.err.println("Don't know about host:" + serverAddr);
@@ -199,6 +201,7 @@ public class ChatWindow implements ActionListener {
 				
 				ss.disconnect();
 				sr.disconnect();
+				textAreaChatIn.setText("");
 				try {
 					this.doc.insertString(this.doc.getLength(),"You have been disconnected ! \r\n",left);
 				} catch (BadLocationException e3) {
@@ -206,7 +209,7 @@ public class ChatWindow implements ActionListener {
 					e3.printStackTrace();
 				}
 		        this.doc.setParagraphAttributes(this.doc.getLength(), 1, this.left, false);
-
+		        
 				btnNewButtonDisconnect.setEnabled(false);
 				btnNewButtonConnect.setEnabled(true);
 				btnNewButtonSend.setEnabled(false);

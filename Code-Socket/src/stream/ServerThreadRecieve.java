@@ -30,16 +30,19 @@ public class ServerThreadRecieve
 		}
 		while (true) {
 	    	
-				//System.out.println(">>>>> "+socIn.readLine());
+				
 				String msg;
 				try {
+					
 					msg = socIn.readLine();
 					if(msg.contains("You said :")) {
 							chat.doc.insertString(chat.doc.getLength(), "\n"+msg, chat.right );
-				            chat.doc.setParagraphAttributes(chat.doc.getLength(), 1, chat.right, false);
+				            chat.doc.setParagraphAttributes(chat.doc.getLength(), 1, chat.right, false);			            
+				            chat.textAreaChatIn.setCaretPosition(chat.textAreaChatIn.getDocument().getLength());
 					}else {
 							chat.doc.insertString(chat.doc.getLength(), "\n"+msg, chat.left );
 				            chat.doc.setParagraphAttributes(chat.doc.getLength(), 1, chat.left, false);
+				            chat.textAreaChatIn.setCaretPosition(chat.textAreaChatIn.getDocument().getLength());
 					}         
 
 				} catch (IOException e) {

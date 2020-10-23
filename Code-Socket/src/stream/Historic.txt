@@ -1,63 +1,13 @@
--->Yann : SAlut ?
--->Aymen : ça va ?
--->Yann : oui et toi ?
--->JUL : wech alors ?
--->JUL : rien ?
--->Aymen : blabla
--->yann : oui
--->aymen : non
--->yann : no
--->yann : oui
--->aymen : toto
--->aymen : salut
--->yann : yo
--->Aymen : test1
--->Yann : test2
--->Aymen : test3
--->Yann : test4
--->aaa : salut
--->aymen : salut tout le monde !
--->yann1 : salut
--->aymen : s
--->aymen : salut
--->aymen : d
--->aymen : d
--->aymen : d
--->aymen : d
--->aymen : d
--->aymen : d
--->aymen : d
--->aymen : d
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : 
--->aymen : dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
 Thu Oct 22 15:45:48 CEST 2020 : -->aymen : test historique avec date
 Thu Oct 22 15:45:54 CEST 2020 : -->yann : ok
+Fri Oct 23 08:45:10 CEST 2020 : -->Aymen : salut mon vieux !
+Fri Oct 23 08:45:25 CEST 2020 : -->Yann : salut ça va ?
+Fri Oct 23 08:45:40 CEST 2020 : -->Aymen : bien et toi ?
+Fri Oct 23 08:45:54 CEST 2020 : -->Aymen : salut
+Fri Oct 23 09:01:00 CEST 2020 : -->test : salut
+Fri Oct 23 09:03:55 CEST 2020 : -->Yann : salut
+Fri Oct 23 09:18:11 CEST 2020 : -->d : salut
+Fri Oct 23 09:18:55 CEST 2020 : -->yann : yo
+Fri Oct 23 09:19:19 CEST 2020 : -->d : ça va ?
+Fri Oct 23 09:37:35 CEST 2020 : -->yann : salut
+Fri Oct 23 09:38:18 CEST 2020 : -->yann : test gauche droite

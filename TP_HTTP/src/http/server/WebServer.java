@@ -13,33 +13,24 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
 /**
- * Example program from Chapter 1 Programming Spiders, Bots and Aggregators in
- * Java Copyright 2001 by Jeff Heaton
- * 
- * WebServer is a very simple web-server. Any request is responded with a very
- * simple web-page.
- * 
- * @author Jeff Heaton
- * @version 1.0
+ * WebServer HTTP
  */
-
-
-
-
 public class WebServer {
 	
 	/* Chemin absolu du repertoire des fichiers ressources utilisés par le server (fichiers statique de tout format (texte, html, média...)) */
-	protected static final String resourceDirectory = "C:/Users/twinss/git/4IF-Programmation-Reseaux/TP_HTTP/web/";
+	protected static final String resourceDirectory = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/";
 	/* Chemin absolu de la page d'acceuil/index du serveur */
-	protected static final String index = "C:/Users/twinss/git/4IF-Programmation-Reseaux/TP_HTTP/web/index.html";
+	protected static final String index = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/index.html";
 	/* Chemin absolu de la page web envoyee en cas d'erreur 404 */
-    protected static final String fileNotFound = "C:/Users/twinss/git/4IF-Programmation-Reseaux/TP_HTTP/web/notfound.html";
+    protected static final String fileNotFound = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/TP_HTTP/web/notfound.html";
 
-  /**
-   * WebServer constructor.
-   */
-	 /** WebServer constructor. */
+    /**
+	  * Demarre le web serveur sur le port 3000 
+	  * et place le serveur en attente de connexion et de requete
+	  * @return void
+	  */
     protected void start() {
         ServerSocket s;
 
@@ -99,13 +90,22 @@ public class WebServer {
             }
         }
     }
-  
+    /**
+	  * Les parametres de la requete du client sont separes dans un tableau.
+	  * Le type de la requete est isole dans la premiere case du tableau.
+	  * Selon le type de la requete, on appelle à travers un switch la methode 
+	  * correspondante pour traiter la requete.
+	  * @param header String qui contient la requete du client
+	  * @param out flux de sortie du web server
+	  * @param in flux d'entree du web server  
+	  * @return void
+	  */
     public void handleRequest(String header, BufferedOutputStream out, BufferedReader in) {
         String[] params = header.split(" ");
         String method, path;
 
         method = params[0]; // GET, POST, PUT, HEAD, ou DELETE
-        path = params[1].substring(1); // target resource, on enlève le / qui précède le nome de la ressource
+        path = params[1].substring(1); // target resource, on enlève le / qui précède le nom de la ressource
         System.out.println(method + " " + path + ".");
 
         /** On traite différement la requête suivant son type */
@@ -134,7 +134,13 @@ public class WebServer {
                 }
         }
     }
-    
+    /**
+	  * Ecriture du contenu du fichier ressource dans 
+	  * le flux de sortie du web server.
+	  * @param out flux de sortie du web server
+	  * @param ressource fichier a envoyer au client
+	  * @return void
+	  */
     public void sendFile(BufferedOutputStream out, File resource) {
         try {
             // Ouverture d'un flux de lecture binaire sur le fichier demande
@@ -152,8 +158,14 @@ public class WebServer {
             System.out.println(e);
         }
     }
-
-   
+    /**
+	  * Trouve le fichier ressource que l'on souhaite consulter avec le parametre
+	  * path et ecrit ce fichier dans le flux de sortie du web server en appelant
+	  * {@link #sendFile(BufferedOutputStream, File)}
+	  * @param path String du chemin de la ressource que l'on souhaite consulter
+	  * @param out flux de sortie du web server
+	  * @return void
+	  */
     public void getRequest(String path, BufferedOutputStream out) {
         try {
             if (path.equals("")) {
@@ -176,8 +188,14 @@ public class WebServer {
             System.out.println(e);
         }
     }
-    
-   
+    /**
+	  * Ajoute du contenu au fichier localise par le parametre path sans supprimer 
+	  * le contenu deja existant.
+	  *@param path String du chemin ou on veut stocker la ressource
+	  *@param out flux de sortie du web server
+	  *@param in flux d'entree du web server
+	  * @return void
+	  */
     public void postRequest(String path,BufferedOutputStream out, BufferedReader in) {
         // Similaire à put sauf qu'on n'écrase pas le contenu du fichier
         try {
@@ -186,7 +204,7 @@ public class WebServer {
             System.out.println("new file vaut : "+newFile);
 
             BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(resource,resource.exists())); // Ouverture d'un flux d'ecriture binaire vers le fichier
-            /** Parcourt des informations recues dans le body de la requete PUT dans le fichier destination */
+            /** Parcourt des informations recues dans le body de la requete POST dans le fichier destination */
             String lineBody = in.readLine();
             while (lineBody!=null && !lineBody.equals("")) {
                 System.out.println("line :"+lineBody);
@@ -217,6 +235,15 @@ public class WebServer {
 
         }
     }
+    
+    /**
+	  * Ajoute du contenu au fichier localise par le parametre path en supprimant 
+	  * le contenu deja existant.
+	  *@param path String du chemin ou l'on veut stocker la ressource
+	  *@param out flux de sortie du web server
+	  *@param in flux d'entree du web server
+	  * @return void
+	  */
     
     public void putRequest(String path,BufferedOutputStream out, BufferedReader in) {
       
@@ -263,6 +290,13 @@ public class WebServer {
         }
     }
     
+    /**
+	  * Supprime le contenu du fichier localise par le parametre path.
+	  *@param path String du chemin  du fichier a supprimer
+	  *@param out flux de sortie du web server
+	  * @return void
+	  */
+    
     public void deleteRequest(String path, BufferedOutputStream out) {
         try {
             File resource = new File(resourceDirectory+path);
@@ -298,7 +332,12 @@ public class WebServer {
         }
     }
 
-    
+    /**
+	  * Envoie le header (status ,type du fichier,taille)   du fichier localise par le parametre path 
+	  *@param path String du chemin ou on veut stocker la ressource
+	  *@param out flux de sortie du web server
+	  * @return void
+	  */
     public void headRequest(String path, BufferedOutputStream out) {
         try {
             
@@ -318,6 +357,11 @@ public class WebServer {
         }
     }
     
+    /**
+	  * Construit le header d'une ressource  a partir d'un status passe en parametre
+	  * @param status String du status
+	  * @return header construit avec le status
+	  */
     protected String sendHeader(String status) {
         String header = "HTTP/1.0 " + status + "\r\n";
         header += "Server: Bot\r\n";
@@ -326,6 +370,14 @@ public class WebServer {
         return header;
     }
     
+    /**
+	  *  Construit le header d'une ressource  a partir 
+	  *  de son status, de son nom
+	  * et  de sa taille  passes en parametre
+	  * @param val la valeur a traiter
+	  * @return header construit avec le status, le nom du fichier
+	  * et sa taille
+	  */
     protected String sendHeader(String status, String filename, long length) {
         String header = "HTTP/1.0 " + status + "\r\n";
         if (filename.endsWith(".html") || filename.endsWith(".htm"))
@@ -353,6 +405,13 @@ public class WebServer {
         System.out.println(header);
         return header;
     }
+    
+    /**
+	  * Résumé du rôle de la méthode.
+	  * Commentaires détaillés sur le role de la methode
+	  * @param val la valeur a traiter
+	  * @return la valeur calculée
+	  */  
   
   public static void main(String args[]) {
     WebServer ws = new WebServer();

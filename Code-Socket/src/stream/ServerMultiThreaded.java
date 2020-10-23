@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 
 public class ServerMultiThreaded  {
@@ -50,6 +51,7 @@ public class ServerMultiThreaded  {
 			ct.start();
 
 			clientsThread.add(ct);
+			sendHistoricChat(ct);
 
 
 		}
@@ -126,6 +128,21 @@ public class ServerMultiThreaded  {
     		pseudo+= id;
     	}
     	return pseudo;
+       }
+       
+       synchronized public static void sendHistoricChat(ClientThread ct) {
+    	   
+    	   try {
+    		   File resource = new File(historicPath);
+			   Scanner myReader = new Scanner(resource);
+			   while(myReader.hasNextLine()) {
+				   String data = myReader.nextLine();
+				   ct.sendMessage(data,"");
+			   }
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
        }
   }
 

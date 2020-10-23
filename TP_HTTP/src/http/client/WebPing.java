@@ -3,6 +3,10 @@ package http.client;
 import java.net.InetAddress;
 import java.net.Socket;
 
+
+/**
+ * ping un web server a partir de l'addresse du serveur et d'un numero de port
+ */
 public class WebPing {
   public static void main(String[] args) {
   
