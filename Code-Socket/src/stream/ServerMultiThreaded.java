@@ -22,7 +22,7 @@ public class ServerMultiThreaded  {
   	**/
 	private static LinkedList<ClientThread> clientsThread;
 	/* Chemin absolu du fichier qui contient l'historique des messages*/
-	protected static final String historicPath = "C:/Users/twinss/git/4IF-Programmation-Reseaux/Code-Socket/src/stream/historic.txt";
+	protected static final String historicPath = "C:/Users/Aymen/git/4IF-Programmation-Reseaux/Code-Socket/src/stream/historic.txt";
 	
 	
        public static void main(String args[]){ 
