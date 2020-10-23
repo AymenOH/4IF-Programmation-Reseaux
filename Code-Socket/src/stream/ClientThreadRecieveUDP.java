@@ -13,7 +13,7 @@ public class ClientThreadRecieveUDP extends Thread {
     /**
      * Socket du client
      */
-    public MulticastSocket socketLecture;
+    public MulticastSocket socketRecieve;
     /**
      * message entrant sur socIn
      */
@@ -23,14 +23,14 @@ public class ClientThreadRecieveUDP extends Thread {
      * Le constructeur de ThreadLecture prend en parametre un socket et une chaine de caracter qui initialise le nom et le le socket
      */
     ClientThreadRecieveUDP(MulticastSocket s) {
-        this.socketLecture = s;
+        this.socketRecieve = s;
     }
     /**
      * Méthode appelée au démarrage du thread grâce à la méthose start(). Elle se charge de le lire les informations qui arrivent sur le socIn et les affiche ensuite.
      */
     public void run() {
         DatagramPacket recv;
-        BufferedReader socIn;
+        //BufferedReader socIn;
         try {
             // Build a datagram packet for response
 
@@ -38,13 +38,13 @@ public class ClientThreadRecieveUDP extends Thread {
             while(true){
                 byte[] buf = new byte[1000];
                 recv = new DatagramPacket(buf, buf.length);
-                socketLecture.receive(recv);
+                socketRecieve.receive(recv);
                 message= new String(recv.getData(),recv.getOffset(),recv.getLength());
                 System.out.println(message);
             }
 
         } catch (Exception e) {
-            System.err.println("Error in EchoServer:" + e);
+            System.err.println("client disconnected !");
         }
 
     }

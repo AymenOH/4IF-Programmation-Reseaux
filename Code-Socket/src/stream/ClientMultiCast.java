@@ -21,7 +21,6 @@ public class ClientMultiCast {
     public static void main(String[] args) throws IOException {
 
         MulticastSocket echoSocket = null;
-        PrintStream socOut = null;
         BufferedReader stdIn = null;
         BufferedReader socIn = null;
 
@@ -52,8 +51,7 @@ public class ClientMultiCast {
                 break;
             }
         }
-        socOut.close();
-        socIn.close();
+        //socIn.close();
         stdIn.close();
         echoSocket.close();
     }
