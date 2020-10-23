@@ -1,5 +1,10 @@
 package stream;
+import javax.swing.text.*;
 
+import javax.swing.JTextPane;
+import javax.swing.JScrollPane;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.AdjustmentEvent;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -15,6 +20,11 @@ import java.net.UnknownHostException;
 import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+
+
+/**
+* @author 
+*/
 public class ChatWindow implements ActionListener {
 
 	protected JFrame frmChat;
@@ -24,7 +34,10 @@ public class ChatWindow implements ActionListener {
 	protected JButton btnNewButtonConnect;
 	protected JButton btnNewButtonDisconnect;
 	protected JButton btnNewButtonSend;
-	protected TextArea textAreaChatIn;
+	protected JTextPane textAreaChatIn;
+	protected StyledDocument doc;
+	protected SimpleAttributeSet left;
+	protected SimpleAttributeSet right;
 	protected JTextField textFieldChatOut;
 	protected Socket echoSocket;
 	protected ServerThreadRecieve sr;
@@ -95,9 +108,25 @@ public class ChatWindow implements ActionListener {
 		btnNewButtonDisconnect.setBounds(403, 61, 89, 23);
 		panel.add(btnNewButtonDisconnect);
 		
-		textAreaChatIn = new TextArea();
+		
+		textAreaChatIn = new JTextPane();
 		textAreaChatIn.setBounds(10, 128, 535, 383);
-		panel.add(textAreaChatIn);
+		//panel.add(textAreaChatIn);
+		
+		doc = textAreaChatIn.getStyledDocument();
+        left = new SimpleAttributeSet();
+        StyleConstants.setAlignment(left, StyleConstants.ALIGN_LEFT);
+        StyleConstants.setForeground(left, Color.BLACK);
+        StyleConstants.setBackground(left, Color.GRAY);
+        right = new SimpleAttributeSet();
+        StyleConstants.setAlignment(right, StyleConstants.ALIGN_RIGHT);
+        StyleConstants.setForeground(right, Color.WHITE);
+        StyleConstants.setBackground(right, Color.BLUE);
+        JScrollPane scroll = new JScrollPane(textAreaChatIn);
+        
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scroll.setBounds(10, 128, 535, 383);
+		panel.add(scroll);
 		
 		textFieldChatOut = new JTextField();
 		textFieldChatOut.setBackground(new Color(255, 255, 255));
@@ -119,7 +148,12 @@ public class ChatWindow implements ActionListener {
 		
 		
 	}
-	
+	/**
+	  * Résumé du rôle de la méthode.
+	  * Commentaires détaillés sur le role de la methode
+	  * @param val la valeur a traiter
+	  * @return la valeur calculée
+	  */
 	
 		public void actionPerformed(ActionEvent e){
 			
@@ -144,8 +178,13 @@ public class ChatWindow implements ActionListener {
 		        }
 		        
 		        System.out.println("Connexion to server "+serverAddr+" with port "+serverPort);
-		        textAreaChatIn.append("Connexion to server "+serverAddr+" with port "+serverPort+"\r\n");
-		        
+		        try {
+					this.doc.insertString(this.doc.getLength(),"Connexion to server "+serverAddr+" with port "+serverPort+"\r\n",left);
+				} catch (BadLocationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		        this.doc.setParagraphAttributes(this.doc.getLength(), 1, this.left, false);
 		        
 		        sr = new ServerThreadRecieve(echoSocket,this);
 		        sr.start();
@@ -160,7 +199,14 @@ public class ChatWindow implements ActionListener {
 				
 				ss.disconnect();
 				sr.disconnect();
-				textAreaChatIn.append("You have been disconnected ! \r\n");
+				try {
+					this.doc.insertString(this.doc.getLength(),"You have been disconnected ! \r\n",left);
+				} catch (BadLocationException e3) {
+					// TODO Auto-generated catch block
+					e3.printStackTrace();
+				}
+		        this.doc.setParagraphAttributes(this.doc.getLength(), 1, this.left, false);
+
 				btnNewButtonDisconnect.setEnabled(false);
 				btnNewButtonConnect.setEnabled(true);
 				btnNewButtonSend.setEnabled(false);

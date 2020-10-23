@@ -67,6 +67,12 @@ public class ServerMultiThreaded  {
     	   
        }
        
+       /**
+  	  * Résumé du rôle de la méthode.
+  	  * Commentaires détaillés sur le role de la methode
+  	  * @param val la valeur a traiter
+  	  * @return la valeur calculée
+  	  */
        synchronized public void saveMessage(String msg, String pseudoSend) {
     	   
     	   String message = "-->" + pseudoSend + " : " + msg;
@@ -86,6 +92,12 @@ public class ServerMultiThreaded  {
     	   }
        }
        
+      /**
+  	  * Résumé du rôle de la méthode.
+  	  * Commentaires détaillés sur le role de la methode
+  	  * @param val la valeur a traiter
+  	  * @return la valeur calculée
+  	  */
        synchronized public void removeClient(String pseudo) {
     	   for(int i = 0 ; i < clientsThread.size() ; ++i) {
        		if(pseudo.equals(clientsThread.get(i).getPseudo())) {
@@ -95,6 +107,13 @@ public class ServerMultiThreaded  {
        	}
     	  
        }
+       
+      /**
+  	  * Résumé du rôle de la méthode.
+  	  * Commentaires détaillés sur le role de la methode
+  	  * @param val la valeur a traiter
+  	  * @return la valeur calculée
+  	  */
        synchronized public String givePseudoToClient(String proposition) {
     	   int id = 0;
     	  String pseudo = proposition;

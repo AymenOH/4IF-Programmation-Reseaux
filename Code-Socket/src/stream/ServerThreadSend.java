@@ -18,7 +18,12 @@ public class ServerThreadSend
 		this.pseudo = pseudo;
 	}
 	
-	
+	/**
+	  * Résumé du rôle de la méthode.
+	  * Commentaires détaillés sur le role de la methode
+	  * @param val la valeur a traiter
+	  * @return la valeur calculée
+	  */
 	public void run() {
 		
         try {
@@ -31,11 +36,22 @@ public class ServerThreadSend
 		}
 
 }
-	
+	/**
+	  * Résumé du rôle de la méthode.
+	  * Commentaires détaillés sur le role de la methode
+	  * @param val la valeur a traiter
+	  * @return la valeur calculée
+	  */
     public void sendMessage(String msg) {
     	socOut.println(msg);
     }
     
+    /**
+	  * Résumé du rôle de la méthode.
+	  * Commentaires détaillés sur le role de la methode
+	  * @param val la valeur a traiter
+	  * @return la valeur calculée
+	  */
     public void disconnect() {
     	socOut.println("disconnect");
     	socOut.close();

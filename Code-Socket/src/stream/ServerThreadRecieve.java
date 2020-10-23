@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import javax.swing.text.BadLocationException;
+
 
 public class ServerThreadRecieve 
 		extends Thread {
@@ -32,10 +34,20 @@ public class ServerThreadRecieve
 				String msg;
 				try {
 					msg = socIn.readLine();
-					chat.textAreaChatIn.append(msg+"\r\n");
+					if(msg.contains("You said :")) {
+							chat.doc.insertString(chat.doc.getLength(), "\n"+msg, chat.right );
+				            chat.doc.setParagraphAttributes(chat.doc.getLength(), 1, chat.right, false);
+					}else {
+							chat.doc.insertString(chat.doc.getLength(), "\n"+msg, chat.left );
+				            chat.doc.setParagraphAttributes(chat.doc.getLength(), 1, chat.left, false);
+					}         
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					//e.printStackTrace();
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 	    }
 	}
